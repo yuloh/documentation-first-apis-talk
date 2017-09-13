@@ -1,0 +1,71 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Matt's Bicycle Shop API
+servers:
+  - url: http://api.matts-bikes.dev/v1
+paths:
+  /work-orders:
+    post:
+      summary: Create a work order
+      requestBody:
+        description: Work order to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewWorkOrder'
+      responses:
+        201:
+          description: The Created Work Order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkOrder"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    WorkOrder:
+      allOf:
+        - $ref: '#/components/schemas/NewWorkOrder'
+        - required:
+          - id
+          properties:
+            id:
+              type: integer
+    NewWorkOrder:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - bicycle
+            - repairs
+            - due_date
+          properties:
+            bicycle:
+              type: string
+            repairs:
+              type: array
+              items:
+                type: string
+            due_date:
+              type: string
+              format: date-time
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
